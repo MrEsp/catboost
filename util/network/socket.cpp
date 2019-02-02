@@ -517,9 +517,26 @@ bool IsNotSocketClosedByOtherSide(SOCKET s) {
 }
 
 #if defined(_win_)
-size_t writev(SOCKET sock, const struct iovec* iov, int iovcnt) {
+ssize_t readv(SOCKET sock, const struct iovec* iov, int iovcnt) {
     WSABUF* wsabuf = (WSABUF*)alloca(iovcnt * sizeof(WSABUF));
-    memset(wsabuf, 0, sizeof(iovcnt * sizeof(WSABUF)));
+    for (int i = 0; i < iovcnt; ++i) {
+        wsabuf[i].buf = iov[i].iov_base;
+        wsabuf[i].len = (u_long)iov[i].iov_len;
+    }
+    DWORD numberOfBytesRecv;
+    DWORD flags = 0;
+    int res = WSARecv(sock, wsabuf, iovcnt, &numberOfBytesRecv, &flags, nullptr, nullptr);
+    if (res == SOCKET_ERROR) {
+        errno = EIO;
+        return -1;
+    }
+    return numberOfBytesRecv;
+}
+#endif
+
+#if defined(_win_)
+ssize_t writev(SOCKET sock, const struct iovec* iov, int iovcnt) {
+    WSABUF* wsabuf = (WSABUF*)alloca(iovcnt * sizeof(WSABUF));
     for (int i = 0; i < iovcnt; ++i) {
         wsabuf[i].buf = iov[i].iov_base;
         wsabuf[i].len = (u_long)iov[i].iov_len;
@@ -528,7 +545,7 @@ size_t writev(SOCKET sock, const struct iovec* iov, int iovcnt) {
     int res = WSASend(sock, wsabuf, iovcnt, &numberOfBytesSent, 0, nullptr, nullptr);
     if (res == SOCKET_ERROR) {
         errno = EIO;
-        return size_t(-1);
+        return -1;
     }
     return numberOfBytesSent;
 }
@@ -935,15 +952,15 @@ namespace {
             insert("::1");
         }
 
-        inline bool IsLocalName(TStringBuf name) const noexcept {
+        inline bool IsLocalName(const char* name) const noexcept {
             struct sockaddr_in sa;
             memset(&sa, 0, sizeof(sa));
 
-            if (inet_pton(AF_INET, name.c_str(), &(sa.sin_addr)) == 1) {
+            if (inet_pton(AF_INET, name, &(sa.sin_addr)) == 1) {
                 return (InetToHost(sa.sin_addr.s_addr) >> 24) == 127;
             }
 
-            return find(name) != end();
+            return contains(name);
         }
     };
 }

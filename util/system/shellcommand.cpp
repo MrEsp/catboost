@@ -402,9 +402,12 @@ void TShellCommand::TImpl::StartProcess(TShellCommand::TImpl::TPipes& pipes) {
     // A sockets do not work as std streams for some reason
     startup_info.hStdOutput = pipes.OutputPipeFd[1];
     startup_info.hStdError = pipes.ErrorPipeFd[1];
-    startup_info.hStdInput = nullptr;
     if (InputStream)
         startup_info.hStdInput = pipes.InputPipeFd[0];
+    else
+        // Don't leave hStdInput unfilled, otherwise any attempt to retrieve the operating-system file handle
+        // that is associated with the specified file descriptor will led to errors.
+        startup_info.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
 
     PROCESS_INFORMATION process_info;
     // TString cmd = "cmd /U" + TUtf16String can be used to read unicode messages from cmd
@@ -413,7 +416,7 @@ void TShellCommand::TImpl::StartProcess(TShellCommand::TImpl::TPipes& pipes) {
     TString cmd = UseShell ? "cmd /A /Q /S /C \"" + qcmd + "\"" : qcmd;
     // winapi can modify command text, copy it
 
-    Y_ENSURE(cmd.size() < MAX_COMMAND_LINE, AsStringBuf("Command is too long"));
+    Y_ENSURE_EX(cmd.size() < MAX_COMMAND_LINE, yexception() << "Command is too long (length=" << cmd.size() << ")");
     TTempArray<wchar_t> cmdcopy(MAX_COMMAND_LINE);
     Copy(cmd.data(), cmd.data() + cmd.size(), cmdcopy.Data());
     *(cmdcopy.Data() + cmd.size()) = 0;

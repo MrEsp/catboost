@@ -20,6 +20,7 @@ TEST_SRCS(
     create_jcoverage_report.py
     extract_jacoco_report.py
     f2c.py
+    fail_module_cmd.py
     fetch_from_external.py
     fetch_from.py
     fetch_from_mds.py
@@ -53,6 +54,7 @@ TEST_SRCS(
     preprocess.py
     provides.py
     py_compile.py
+    run_ios_simulator.py
     run_javac.py
     run_llvm_dsymutil.py
     run_msvc_wine.py

@@ -1,6 +1,7 @@
 
 
 RECURSE(
+    android_ifaddrs
     base64
     brotli
     clapack
@@ -8,6 +9,7 @@ RECURSE(
     cppdemangle/all
     crcutil
     cxxsupp/libcxx
+    expat
     fastlz
     flatbuffers
     flatbuffers/samples

@@ -62,6 +62,23 @@ namespace NCB {
         return true;
     }
 
+    TQuantizedFeaturesInfo::TQuantizedFeaturesInfo(
+        const TFeaturesLayout& featuresLayout,
+        TConstArrayRef<ui32> ignoredFeatures,
+        NCatboostOptions::TBinarizationOptions floatFeaturesBinarization,
+        bool floatFeaturesAllowNansInTestOnly,
+        bool allowWriteFiles)
+        : FeaturesLayout(MakeIntrusive<TFeaturesLayout>(featuresLayout))
+        , FloatFeaturesBinarization(std::move(floatFeaturesBinarization))
+        , FloatFeaturesAllowNansInTestOnly(floatFeaturesAllowNansInTestOnly)
+        , CatFeaturesPerfectHash(
+            featuresLayout.GetCatFeatureCount(),
+            TString::Join("cat_feature_index.", CreateGuidAsString(), ".tmp"),
+            allowWriteFiles)
+    {
+        FeaturesLayout->IgnoreExternalFeatures(ignoredFeatures);
+    }
+
 
     bool TQuantizedFeaturesInfo::operator==(const TQuantizedFeaturesInfo& rhs) const {
         return (*FeaturesLayout == *rhs.FeaturesLayout) &&
@@ -98,6 +115,19 @@ namespace NCB {
             nanMode = NanModes.at(*floatFeatureIdx);
         }
         return nanMode;
+    }
+
+    ui32 TQuantizedFeaturesInfo::CalcMaxCategoricalFeaturesUniqueValuesCountOnLearn() const {
+        ui32 maxCategoricalFeaturesUniqueValuesCountOnLearn = 0;
+        FeaturesLayout->IterateOverAvailableFeatures<EFeatureType::Categorical>(
+            [&] (TCatFeatureIdx catFeatureIdx) {
+                auto learnOnlyCount = CatFeaturesPerfectHash.GetUniqueValuesCounts(catFeatureIdx).OnLearnOnly;
+                if (learnOnlyCount > maxCategoricalFeaturesUniqueValuesCountOnLearn) {
+                    maxCategoricalFeaturesUniqueValuesCountOnLearn = learnOnlyCount;
+                }
+            }
+        );
+        return maxCategoricalFeaturesUniqueValuesCountOnLearn;
     }
 
     TPerfectHashedToHashedCatValuesMap TQuantizedFeaturesInfo::CalcPerfectHashedToHashedCatValuesMap(

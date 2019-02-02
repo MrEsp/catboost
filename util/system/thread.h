@@ -1,8 +1,8 @@
 #pragma once
 
 /// This code should not be used directly unless you really understand what you do.
-/// If you need threads, use thread pool functionality in <util/thread/pool.h>
-/// @see SystemThreadPool()
+/// If you need threads, use thread pool functionality in <util/thread/factory.h>
+/// @see SystemThreadFactory()
 
 #include <util/generic/ptr.h>
 #include <util/generic/string.h>

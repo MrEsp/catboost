@@ -995,7 +995,7 @@ def test_train_on_binarized_equal_train_on_float(boosting_type, qwise_loss):
             local_canonical_file(borders_file, diff_tool=diff_tool())]
 
 
-FSTR_TYPES = ['FeatureImportance', 'InternalFeatureImportance', 'InternalInteraction', 'Interaction', 'ShapValues']
+FSTR_TYPES = ['PredictionValuesChange', 'InternalFeatureImportance', 'InternalInteraction', 'Interaction', 'ShapValues']
 
 
 @pytest.mark.parametrize('fstr_type', FSTR_TYPES)
@@ -2146,13 +2146,17 @@ def test_convert_model_to_json_without_cat_features():
         ('QueryRMSE', 'NDCG', 'Ordered'),
         # Boosting type 'Ordered' is not supported for YetiRankPairwise and PairLogitPairwise
         ('YetiRankPairwise', 'NDCG', 'Plain'),
-        ('PairLogitPairwise', 'NDCG', 'Plain')
+        ('PairLogit', 'PairAccuracy', 'Plain'),
+        ('PairLogitPairwise', 'NDCG', 'Plain'),
+        ('PairLogitPairwise', 'PairAccuracy', 'Plain'),
     ],
     ids=[
         'loss_function=QueryRMSE,eval_metric=NDCG,boosting_type=Plain',
         'loss_function=QueryRMSE,eval_metric=NDCG,boosting_type=Ordered',
         'loss_function=YetiRankPairwise,eval_metric=NDCG,boosting_type=Plain',
-        'loss_function=PairLogitPairwise,eval_metric=NDCG,boosting_type=Plain'
+        'loss_function=PairLogit,eval_metric=PairAccuracy,boosting_type=Plain',
+        'loss_function=PairLogitPairwise,eval_metric=NDCG,boosting_type=Plain',
+        'loss_function=PairLogitPairwise,eval_metric=PairAccuracy,boosting_type=Plain'
     ]
 )
 def test_groupwise_with_cat_features(loss_function, eval_metric, boosting_type):
@@ -2215,3 +2219,18 @@ def test_ctr_target_quantization(border_count, boosting_type):
     fit_catboost_gpu(params)
     apply_catboost(output_model_path, test_file, cd_file, output_eval_path)
     return [local_canonical_file(output_eval_path, diff_tool=diff_tool())]
+
+
+def test_train_on_quantized_pool_with_large_grid():
+    # Dataset with 2 random columns, first is Target, second is Num, used Uniform grid with 10000
+    # borders
+    #
+    # There are 20 rows in a dataset.
+    cmd = (
+        CATBOOST_PATH, 'fit',
+        '--task-type', 'GPU',
+        '-f', 'quantized://' + data_file('quantized_with_large_grid', 'train.qbin'),
+        '-t', 'quantized://' + data_file('quantized_with_large_grid', 'test.qbin'),
+        '-i', '10')
+
+    yatest.common.execute(cmd)

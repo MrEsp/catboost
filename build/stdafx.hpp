@@ -66,6 +66,7 @@
 #include <sstream>
 #include <stack>
 #include <stdexcept>
+#include <stlfwd>
 #include <streambuf>
 #include <string>
 #include <strstream>
@@ -234,7 +235,6 @@
 #include <util/generic/ylimits.h>
 #include <util/generic/hash.h>
 #include <util/generic/mem_copy.h>
-#include <util/generic/stlfwd.h>
 #include <util/generic/guid.h>
 #include <util/generic/hash_primes.h>
 #include <util/generic/map.h>
@@ -278,11 +278,11 @@
 #include <util/digest/fnv.h>
 #include <util/digest/murmur.h>
 #include <util/ysaveload.h>
-#include <util/thread/pool.h>
+#include <util/thread/factory.h>
 #include <util/thread/lfstack.h>
 #include <util/thread/singleton.h>
 #include <util/thread/lfqueue.h>
-#include <util/thread/queue.h>
+#include <util/thread/pool.h>
 #include <util/str_stl.h>
 #include <util/folder/path.h>
 #include <util/folder/dirut.h>

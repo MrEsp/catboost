@@ -16,7 +16,6 @@
         "ymake": { "description": "Run ymake", "visible": false },
         "ymake_dev": { "description": "Run ymake dev version", "visible": false },
         "test_tool": { "description": "Test tools for tests", "visible": false },
-        "coverage_uploader": { "description": "Coverage uploader to YT", "visible": false },
         "maven_import_sandbox_uploader": { "description": "Sandbox uploader for maven-import cmd", "visible": false },
         "cmake": { "description": "Run cmake" },
         "ninja": { "description": "Run ninja" },
@@ -145,8 +144,8 @@
         "wine-msvc2017-x86_64": {
             "name": "msvc2017",
             "tools": {
-                "cc": { "bottle": "msvc2017", "executable": "cross_msvc" },
-                "c++": { "bottle": "msvc2017", "executable": "cross_msvc" }
+                "cc": { "bottle": "msvc2017", "executable": "msvc" },
+                "c++": { "bottle": "msvc2017", "executable": "msvc" }
             },
             "platforms": [{"host": {"os": "LINUX"}, "target": {"os": "WIN"}, "default": true}],
             "params": {
@@ -166,6 +165,106 @@
                 "c++": { "bottle": "msvc2017", "executable": "msvc" }
             },
             "platforms": [{"host": {"os": "LINUX"}, "target": {"os": "WIN", "arch": "arm"}, "default": true}],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:571614508)/bin/wine64 -v140 c $(MSVC)/bin/Hostx64/arm/cl.exe",
+                "cxx_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:571614508)/bin/wine64 -v140 cxx $(MSVC)/bin/Hostx64/arm/cl.exe",
+                "version": "2017",
+                "wine": "yes"
+            }
+        },
+        "msvc2017-i686-next": {
+            "name": "msvc2017next",
+            "tools": {
+                "cc": { "bottle": "msvc2017next", "executable": "msvc" },
+                "c++": { "bottle": "msvc2017next", "executable": "msvc" }
+            },
+            "platforms": [{"host": {"os": "WIN"}, "target": {"os": "WIN", "arch": "i686"}}],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "$(MSVC)/bin/Hostx64/x86/cl.exe",
+                "cxx_compiler": "$(MSVC)/bin/Hostx64/x86/cl.exe",
+                "version": "2017"
+            }
+        },
+        "msvc2017-x86_64-next": {
+            "name": "msvc2017next",
+            "tools": {
+                "cc": { "bottle": "msvc2017next", "executable": "msvc" },
+                "c++": { "bottle": "msvc2017next", "executable": "msvc" }
+            },
+            "platforms": [{"host": {"os": "WIN"}}],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "$(MSVC)/bin/Hostx64/x64/cl.exe",
+                "cxx_compiler": "$(MSVC)/bin/Hostx64/x64/cl.exe",
+                "version": "2017",
+                "for_ide": "msvs2017"
+            }
+        },
+        "msvc2017-arm-next": {
+            "name": "msvc2017next",
+            "tools": {
+                "cc": { "bottle": "msvc2017next", "executable": "msvc" },
+                "c++": { "bottle": "msvc2017next", "executable": "msvc" }
+            },
+            "platforms": [{"host": {"os": "WIN"}, "target": {"os": "WIN", "arch": "arm"}}],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "$(MSVC)/bin/Hostx64/arm/cl.exe",
+                "cxx_compiler": "$(MSVC)/bin/Hostx64/arm/cl.exe",
+                "version": "2017"
+            }
+        },
+        "wine-msvc2017-i686-next": {
+            "name": "msvc2017next",
+            "tools": {
+                "cc": { "bottle": "msvc2017next", "executable": "msvc" },
+                "c++": { "bottle": "msvc2017next", "executable": "msvc" }
+            },
+            "platforms": [{"host": {"os": "LINUX"}, "target": {"os": "WIN", "arch": "i686"}}],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:571614508)/bin/wine64 -v140 c $(MSVC)/bin/Hostx64/x86/cl.exe",
+                "cxx_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:571614508)/bin/wine64 -v140 cxx $(MSVC)/bin/Hostx64/x86/cl.exe",
+                "version": "2017",
+                "wine": "yes"
+            }
+        },
+        "wine-msvc2017-x86_64-next": {
+            "name": "msvc2017next",
+            "tools": {
+                "cc": { "bottle": "msvc2017next", "executable": "msvc" },
+                "c++": { "bottle": "msvc2017next", "executable": "msvc" }
+            },
+            "platforms": [{"host": {"os": "LINUX"}, "target": {"os": "WIN"}}],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:571614508)/bin/wine64 -v140 c $(MSVC)/bin/Hostx64/x64/cl.exe",
+                "cxx_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:571614508)/bin/wine64 -v140 cxx $(MSVC)/bin/Hostx64/x64/cl.exe",
+                "version": "2017",
+                "wine": "yes"
+            }
+        },
+        "wine-msvc2017-arm-next": {
+            "name": "msvc2017next",
+            "tools": {
+                "cc": { "bottle": "msvc2017next", "executable": "msvc" },
+                "c++": { "bottle": "msvc2017next", "executable": "msvc" }
+            },
+            "platforms": [{"host": {"os": "LINUX"}, "target": {"os": "WIN", "arch": "arm"}}],
             "params": {
                 "type": "msvc",
                 "match_root": "MSVC",
@@ -207,17 +306,6 @@
             "platforms": [
                 {"host": {"os": "LINUX"}, "default": true},
                 {"host": {"os": "FREEBSD"}, "default": true},
-                {"host": {"os": "WIN"}, "default": true},
-                {"host": {"os": "DARWIN"}, "default": true},
-                {"host": {"os": "LINUX", "arch": "aarch64"}, "default": true}
-            ]
-        },
-        "coverage_uploader": {
-            "tools": {
-                "coverage_uploader": { "bottle": "coverage_uploader", "executable": "coverage_uploader" }
-            },
-            "platforms": [
-                {"host": {"os": "LINUX"}, "default": true},
                 {"host": {"os": "WIN"}, "default": true},
                 {"host": {"os": "DARWIN"}, "default": true},
                 {"host": {"os": "LINUX", "arch": "aarch64"}, "default": true}
@@ -457,6 +545,27 @@
             "platforms": [
                 {"host": {"os": "LINUX"}, "target": {"os": "ANDROID", "arch": "i686"}, "default": true},
                 {"host": {"os": "DARWIN"}, "target": {"os": "ANDROID", "arch": "i686"}, "default": true}
+            ],
+            "params": {
+                "type": "clang",
+                "match_root": "CLANG",
+                "c_compiler": "$(CLANG)/bin/clang",
+                "cxx_compiler": "$(CLANG)/bin/clang++",
+                "werror_mode": "compiler_specific",
+                "gcc_version": "6.0"
+            }
+        },
+        "clang6-android-x86_64": {
+            "name": "clang6",
+            "tools": {
+                "cc": { "bottle": "clang6-android-x86_64", "executable": "cc" },
+                "c++": { "bottle": "clang6-android-x86_64", "executable": "c++" },
+                "gcov": { "bottle": "clang6-android-x86_64", "executable": "gcov" },
+                "strip": { "bottle": "clang6-android-x86_64", "executable": "strip" }
+            },
+            "platforms": [
+                {"host": {"os": "LINUX"}, "target": {"os": "ANDROID", "arch": "x86_64"}, "default": true},
+                {"host": {"os": "DARWIN"}, "target": {"os": "ANDROID", "arch": "x86_64"}, "default": true}
             ],
             "params": {
                 "type": "clang",
@@ -1208,9 +1317,18 @@
                 "msvc": ["bin", "Hostx64", "x64", "cl.exe"]
             }
         },
+        "msvc2017next": {
+            "formula": {
+                "sandbox_id": 367076918,
+                "match": "2017"
+            },
+            "executable": {
+                "msvc": ["bin", "Hostx64", "x64", "cl.exe"]
+            }
+        },
         "ymake": {
             "formula": {
-                "sandbox_id": [365767636],
+                "sandbox_id": [370077335],
                 "match": "ymake"
             },
             "executable": {
@@ -1228,20 +1346,11 @@
         },
         "test_tool": {
             "formula": {
-                "sandbox_id": [364035950],
+                "sandbox_id": [370774111],
                 "match": "test_tool"
             },
             "executable": {
                 "test_tool": ["test_tool"]
-            }
-        },
-        "coverage_uploader": {
-            "formula": {
-                "sandbox_id": 296620226,
-                "match": "coverage_uploader"
-            },
-            "executable": {
-                "coverage_uploader": ["coverage_uploader"]
             }
         },
         "maven_import_sandbox_uploader": {
@@ -1255,7 +1364,7 @@
         },
         "arc": {
             "formula": {
-                "sandbox_id": [366051836],
+                "sandbox_id": [371268002],
                 "match": "arc"
             },
             "executable": {
@@ -1264,7 +1373,7 @@
         },
         "yo": {
             "formula": {
-                "sandbox_id": [361379374, 360631809],
+                "sandbox_id": [369222292, 369222304],
                 "match": "yo"
             },
             "executable": {
@@ -1378,6 +1487,17 @@
         "clang6-android-x86": {
             "formula": {
                 "sandbox_id": [286141541, 286158872],
+                "match": "NDK"
+            },
+            "executable": {
+                "c++": ["bin", "clang++"],
+                "cc": ["bin", "clang"],
+                "strip": ["bin", "strip"]
+            }
+        },
+        "clang6-android-x86_64": {
+            "formula": {
+                "sandbox_id": [369520747, 369520872],
                 "match": "NDK"
             },
             "executable": {
@@ -1656,11 +1776,11 @@
         },
         "yp-util": {
             "formula": {
-                "sandbox_id":  [353295496],
-                "match": "yp_cli"
+                "sandbox_id":  [366900797],
+                "match": "yp_util"
             },
             "executable": {
-                "yp-util": ["yp_cli"]
+                "yp-util": ["yp_util"]
             }
         },
         "yp": {
@@ -1752,7 +1872,7 @@
         },
         "svn110": {
             "formula": {
-                "sandbox_id": 289699987,
+                "sandbox_id": 368201676,
                 "match": "svn"
             },
             "executable": {
@@ -1973,7 +2093,7 @@
         },
         "graphs_difference": {
             "formula": {
-                "sandbox_id": 335427621,
+                "sandbox_id": 371407361,
                 "match": "graphs_difference"
             },
             "executable": {
